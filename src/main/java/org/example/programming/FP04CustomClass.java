@@ -116,6 +116,42 @@ public class FP04CustomClass {
         System.out.println("comparingByNoOfStudentsAndNoOfReviews Efficent Way "+
                 courses.stream().sorted(comparingByNoOfStudentsAndNoOfReviewsNonBoxing).collect(Collectors.toList())
         );
+        //[FullStack:14000:91, Spring Boot:18000:95, Kubernetes:20000:91, Docker:20000:92, Spring:20000:98, AWS:21000:92, Azure:21000:99, API:22000:97, Microservices:25000:96]
+
+
+        //limit(), içerisine yazılan miktar kadar veriyi getirir.
+        System.out.println("comparingByNoOfStudentsAndNoOfReviews with limit(5) "+
+                courses.stream().sorted(comparingByNoOfStudentsAndNoOfReviewsNonBoxing).limit(5).collect(Collectors.toList())
+        );
+        //[FullStack:14000:91, Spring Boot:18000:95, Kubernetes:20000:91, Docker:20000:92, Spring:20000:98]
+
+
+        //skip(), içine yazılan sayı kadarını atlayıp işleme devam edecektir.
+        System.out.println("comparingByNoOfStudentsAndNoOfReviews with Skip(3) "+
+                courses.stream().sorted(comparingByNoOfStudentsAndNoOfReviewsNonBoxing).skip(3).collect(Collectors.toList())
+        );
+        //[Docker:20000:92, Spring:20000:98, AWS:21000:92, Azure:21000:99, API:22000:97, Microservices:25000:96]
+
+
+        // takeWhile, içine yazılan logic kuralına kadar olan verileri yazar uymayan geldiğinde durur.
+        System.out.println("comparingByNoOfStudentsAndNoOfReviews with takeWhile() "+
+                courses.stream()
+                        .takeWhile(course -> course.getReviewScore()>=95)
+                        .collect(Collectors.toList())
+        );
+        //[Spring:20000:98, Spring Boot:18000:95, API:22000:97, Microservices:25000:96]
+
+
+        //dropWhile(), akışın başlangıcından itibaren belirli bir koşulu sağlayan elemanları atlar ve koşulu sağlamayan
+        // ilk elemandan itibaren geri kalan tüm elemanları içeren yeni bir koleksiyon veya akış döndürür.
+        System.out.println("comparingByNoOfStudentsAndNoOfReviews with dropWhile() "+
+                courses.stream()
+                        .dropWhile(course -> course.getReviewScore()>=95)
+                        .collect(Collectors.toList())
+        );
+        //[FullStack:14000:91, AWS:21000:92, Azure:21000:99, Docker:20000:92, Kubernetes:20000:91]
+
+
     }
 }
 
