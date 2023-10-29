@@ -1,7 +1,9 @@
 package org.example.programming;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 class Course {
         private String name;
@@ -81,6 +83,39 @@ public class FP04CustomClass {
 
         // anyMatches, içine yazılan predicate ifadeden herhangi bir eşleşme true döndürür.
         System.out.println(courses.stream().anyMatch(reviewScoreLessThan90Predicate));  //false
+
+
+        //Sorting courses with sorted and creating comperators
+
+        //getNoOfStudents sayısına göre nesneleri küçükten büyüğe doğru sıraladık.
+        Comparator<Course> comparingByNoOfStudentsIncreasing = Comparator.comparing(Course::getNoOfStudents);
+        System.out.println("comparingByNoOfStudents ASC");
+        System.out.println(
+                courses.stream().sorted(comparingByNoOfStudentsIncreasing).collect(Collectors.toList()));
+        //[FullStack:14000:91, Spring Boot:18000:95, Spring:20000:98, Docker:20000:92, Kubernetes:20000:91, AWS:21000:92, Azure:21000:99, API:22000:97, Microservices:25000:96]
+
+        //getNoOfStudents sayısına göre nesneleri reversed() ile büyükten küçüğe doğru sıraladık.
+        Comparator<Course> comparingByNoOfStudentsDecreasing = Comparator.comparing(Course::getNoOfStudents).reversed();
+        System.out.println("comparingByNoOfStudents DESC");
+        System.out.println(
+                courses.stream().sorted(comparingByNoOfStudentsDecreasing).collect(Collectors.toList()));
+        //[Microservices:25000:96, API:22000:97, AWS:21000:92, Azure:21000:99, Spring:20000:98, Docker:20000:92, Kubernetes:20000:91, Spring Boot:18000:95, FullStack:14000:91]
+
+
+        //getNoOfStudents sayıları aynı olan verilerde ek bir sıralama yapabilmek için
+        Comparator<Course> comparingByNoOfStudentsAndNoOfReviews
+                = Comparator.comparing(Course::getNoOfStudents).thenComparing(Course::getReviewScore);
+        System.out.println("comparingByNoOfStudentsAndNoOfReviews "+
+                courses.stream().sorted(comparingByNoOfStudentsAndNoOfReviews).collect(Collectors.toList())
+        );
+        //[FullStack:14000:91, Spring Boot:18000:95, Kubernetes:20000:91, Docker:20000:92, Spring:20000:98, AWS:21000:92, Azure:21000:99, API:22000:97, Microservices:25000:96]
+
+        //Sorting işlemlerinde gereksiz autoboxing işlemleri yapmamak ve daha verimli olması için aşağıdaki gibi düzenleme yapabiliriz.
+        Comparator<Course> comparingByNoOfStudentsAndNoOfReviewsNonBoxing
+                = Comparator.comparingInt(Course::getNoOfStudents).thenComparingInt(Course::getReviewScore);
+        System.out.println("comparingByNoOfStudentsAndNoOfReviews Efficent Way "+
+                courses.stream().sorted(comparingByNoOfStudentsAndNoOfReviewsNonBoxing).collect(Collectors.toList())
+        );
     }
 }
 
