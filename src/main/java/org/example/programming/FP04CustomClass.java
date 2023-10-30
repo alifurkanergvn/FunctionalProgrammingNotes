@@ -107,50 +107,86 @@ public class FP04CustomClass {
                 = Comparator.comparing(Course::getNoOfStudents).thenComparing(Course::getReviewScore);
         System.out.println("comparingByNoOfStudentsAndNoOfReviews "+
                 courses.stream().sorted(comparingByNoOfStudentsAndNoOfReviews).collect(Collectors.toList())
-        );
-        //[FullStack:14000:91, Spring Boot:18000:95, Kubernetes:20000:91, Docker:20000:92, Spring:20000:98, AWS:21000:92, Azure:21000:99, API:22000:97, Microservices:25000:96]
+        );//[FullStack:14000:91, Spring Boot:18000:95, Kubernetes:20000:91, Docker:20000:92, Spring:20000:98, AWS:21000:92, Azure:21000:99, API:22000:97, Microservices:25000:96]
 
         //Sorting işlemlerinde gereksiz autoboxing işlemleri yapmamak ve daha verimli olması için aşağıdaki gibi düzenleme yapabiliriz.
         Comparator<Course> comparingByNoOfStudentsAndNoOfReviewsNonBoxing
                 = Comparator.comparingInt(Course::getNoOfStudents).thenComparingInt(Course::getReviewScore);
         System.out.println("comparingByNoOfStudentsAndNoOfReviews Efficent Way "+
                 courses.stream().sorted(comparingByNoOfStudentsAndNoOfReviewsNonBoxing).collect(Collectors.toList())
-        );
-        //[FullStack:14000:91, Spring Boot:18000:95, Kubernetes:20000:91, Docker:20000:92, Spring:20000:98, AWS:21000:92, Azure:21000:99, API:22000:97, Microservices:25000:96]
+        );//[FullStack:14000:91, Spring Boot:18000:95, Kubernetes:20000:91, Docker:20000:92, Spring:20000:98, AWS:21000:92, Azure:21000:99, API:22000:97, Microservices:25000:96]
 
 
         //limit(), içerisine yazılan miktar kadar veriyi getirir.
         System.out.println("comparingByNoOfStudentsAndNoOfReviews with limit(5) "+
                 courses.stream().sorted(comparingByNoOfStudentsAndNoOfReviewsNonBoxing).limit(5).collect(Collectors.toList())
-        );
-        //[FullStack:14000:91, Spring Boot:18000:95, Kubernetes:20000:91, Docker:20000:92, Spring:20000:98]
+        );//[FullStack:14000:91, Spring Boot:18000:95, Kubernetes:20000:91, Docker:20000:92, Spring:20000:98]
 
 
         //skip(), içine yazılan sayı kadarını atlayıp işleme devam edecektir.
         System.out.println("comparingByNoOfStudentsAndNoOfReviews with Skip(3) "+
                 courses.stream().sorted(comparingByNoOfStudentsAndNoOfReviewsNonBoxing).skip(3).collect(Collectors.toList())
-        );
-        //[Docker:20000:92, Spring:20000:98, AWS:21000:92, Azure:21000:99, API:22000:97, Microservices:25000:96]
+        );//[Docker:20000:92, Spring:20000:98, AWS:21000:92, Azure:21000:99, API:22000:97, Microservices:25000:96]
 
 
         // takeWhile, içine yazılan logic kuralına kadar olan verileri yazar uymayan geldiğinde durur.
-        System.out.println("comparingByNoOfStudentsAndNoOfReviews with takeWhile() "+
+        System.out.println("takeWhile() "+
                 courses.stream()
                         .takeWhile(course -> course.getReviewScore()>=95)
                         .collect(Collectors.toList())
-        );
-        //[Spring:20000:98, Spring Boot:18000:95, API:22000:97, Microservices:25000:96]
+        );//[Spring:20000:98, Spring Boot:18000:95, API:22000:97, Microservices:25000:96]
 
 
         //dropWhile(), akışın başlangıcından itibaren belirli bir koşulu sağlayan elemanları atlar ve koşulu sağlamayan
         // ilk elemandan itibaren geri kalan tüm elemanları içeren yeni bir koleksiyon veya akış döndürür.
-        System.out.println("comparingByNoOfStudentsAndNoOfReviews with dropWhile() "+
+        System.out.println("dropWhile() "+
                 courses.stream()
                         .dropWhile(course -> course.getReviewScore()>=95)
                         .collect(Collectors.toList())
-        );
-        //[FullStack:14000:91, AWS:21000:92, Azure:21000:99, Docker:20000:92, Kubernetes:20000:91]
+        );//[FullStack:14000:91, AWS:21000:92, Azure:21000:99, Docker:20000:92, Kubernetes:20000:91]
 
+
+        //max(),içine yazılan logice göre sıralandığında en son elementi getirir.
+        System.out.println("max() "+
+                courses.stream().max(comparingByNoOfStudentsAndNoOfReviewsNonBoxing)
+        );//Optional[Microservices:25000:96]
+
+
+        //min()
+        System.out.println("min() "+
+                courses.stream().min(comparingByNoOfStudentsAndNoOfReviewsNonBoxing)
+        );//Optional[FullStack:14000:91]
+
+        Predicate<Course> reviewScoreLessThen90Predicate = course -> course.getNoOfStudents() < 90;
+        System.out.println("Empty min() "+
+                courses.stream().filter(reviewScoreLessThen90Predicate)
+                        .min(comparingByNoOfStudentsAndNoOfReviewsNonBoxing)
+                        .orElse( new Course("Kubernetes", "Cloud", 91, 20000)) //Empty min() Kubernetes:20000:91  başındaki Optional gitmiş oldu.
+        );//Optional.empty
+
+
+        //orElse(), sonucun varlığı kontrol edilir yazılan logic geçerli değilse bununla yazılanı yap demek.
+        //Bir nevi empty kontrolü de yapmış olduk
+        System.out.println("Empty min() with orElse() "+
+                courses.stream().filter(reviewScoreLessThen90Predicate)
+                        .min(comparingByNoOfStudentsAndNoOfReviewsNonBoxing)
+                        .orElse( new Course("Kubernetes", "Cloud", 91, 20000))
+        );//Empty min() with orElse() Kubernetes:20000:91
+
+
+        System.out.println("findFirst() "+
+                courses.stream()
+                        .filter(reviewScoreGreaterThan95Predicate)
+                        .findFirst()
+        );//Optional[Spring:20000:98]
+
+
+        //findAny(), kurala uyan herhangi veriyi getirir.
+        System.out.println("findAny() "+
+                courses.stream()
+                        .filter(reviewScoreGreaterThan95Predicate)
+                        .findAny()
+        );//findAny() Optional[Spring:20000:98]
 
     }
 }
