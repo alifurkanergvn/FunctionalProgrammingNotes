@@ -216,6 +216,45 @@ public class FP04CustomClass {
                         .max()
         );//max(), OptionalInt[25000]
 
+
+        //groupingBy(),Stream öğelerini gruplandırmak için kullanılır ve sonuç olarak bir Map döndürür.
+        System.out.println("groupingBy(), "+
+                courses.stream()
+                        .collect(Collectors.groupingBy(Course::getCategory))
+
+        );//groupingBy(),
+        // {Cloud=[AWS:21000:92, Azure:21000:99, Docker:20000:92, Kubernetes:20000:91],
+        //  FullStack=[FullStack:14000:91], Microservices=[API:22000:97, Microservices:25000:96],
+        //  Framework=[Spring:20000:98, Spring Boot:18000:95]}
+
+        //Kategori ismi ve o kategoriye ait içeriğin sayısını döndüren yapı.
+        System.out.println("groupingBy() with count of Catagory , "+
+                courses.stream()
+                        .collect(Collectors.groupingBy(Course::getCategory, Collectors.counting()))
+        );//groupingBy() with count of Catagory , {Cloud=4, FullStack=1, Microservices=2, Framework=2}
+
+        //Kategoriye göre gruplayıp grup içindeki getReviewScore'u fazla olanı getir.
+        System.out.println("groupingBy() with maxBy() of getReviewScore, "+
+                courses.stream()
+                        .collect(Collectors.groupingBy(Course::getCategory,
+                                Collectors.maxBy(Comparator.comparing(Course::getReviewScore))))
+        );//groupingBy() with maxBy() of getReviewScore,
+        // {Cloud=Optional[Azure:21000:99],
+        //  FullStack=Optional[FullStack:14000:91],
+        //  Microservices=Optional[API:22000:97],
+        //  Framework=Optional[Spring:20000:98]}
+
+
+        //Course kategorileri gruplandır içerisinde bulunan kurs ismine göre liste tutsun
+        System.out.println("groupingBy() with mapping() of getName, "+
+                courses.stream()
+                        .collect(Collectors.groupingBy(Course::getCategory,
+                                Collectors.mapping(Course::getName,Collectors.toList())))
+        );//groupingBy() with mapping() of getName,
+        // {Cloud=[AWS, Azure, Docker, Kubernetes],
+        // FullStack=[FullStack], Microservices=[API,
+        // Microservices], Framework=[Spring, Spring Boot]}
+
     }
 }
 
