@@ -72,7 +72,7 @@ public class FP04CustomClass {
         System.out.println(
                 courses.stream().allMatch(course -> course.getReviewScore() > 90) //true
         );
-        Predicate<Course> reviewScoreGreaterThan95Predicate = course -> course.getReviewScore() > 90;
+        Predicate<Course> reviewScoreGreaterThan95Predicate = course -> course.getReviewScore() > 95;
         System.out.println(courses.stream().allMatch(reviewScoreGreaterThan95Predicate));  //true
 
 
@@ -187,6 +187,34 @@ public class FP04CustomClass {
                         .filter(reviewScoreGreaterThan95Predicate)
                         .findAny()
         );//findAny() Optional[Spring:20000:98]
+
+        System.out.println("sum(), "+
+                courses.stream()
+                        .filter(reviewScoreGreaterThan95Predicate)
+                        .mapToInt(Course::getNoOfStudents)
+                        .sum()
+        );//sum() 88000
+
+        System.out.println("average(), "+
+                courses.stream()
+                        .filter(reviewScoreGreaterThan95Predicate)
+                        .mapToInt(Course::getNoOfStudents)
+                        .average()
+        );//average() OptionalDouble[22000.0]
+
+        System.out.println("count(), "+
+                courses.stream()
+                        .filter(reviewScoreGreaterThan95Predicate)
+                        .mapToInt(Course::getNoOfStudents)
+                        .count()
+        );//count() 4
+
+        System.out.println("max(), "+
+                courses.stream()
+                        .filter(reviewScoreGreaterThan95Predicate)
+                        .mapToInt(Course::getNoOfStudents)
+                        .max()
+        );//max(), OptionalInt[25000]
 
     }
 }
